@@ -1,5 +1,6 @@
 // server.js
 require("dotenv").config();
+const ChatMessage = require("./chatMessageModel");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -24,7 +25,17 @@ mongoose.connect(MONGO_URL)
 
 app.use("/registeruser", registeruserRoutes);
 app.use("/chat", chatRoutes);
+app.delete("/deleteAllMessages", async (req, res) => {
+    try {
+        // Delete all messages
+        await ChatMessage.deleteMany();
 
+        res.status(200).json({ message: "All messages deleted successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Server Error" });
+    }
+});
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
